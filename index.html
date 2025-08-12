@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ödev Takip Sistemi — SCORM</title>
-  <link rel="icon" href="assets/logo.svg">
+  <title>Ödev Takip Sistemi</title>
+  <link rel="icon" href="/assets/logo.svg">
   <style>
     :root{
       --bg:#ffffff; --fg:#0f172a; --muted:#64748b; --primary:#2563eb; --primary-weak:#eff6ff; --line:#e5e7eb; --good:#16a34a; --bad:#dc2626; --warn:#d97706;
@@ -14,17 +14,21 @@
     *{box-sizing:border-box}
     html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
     a{color:inherit}
-    header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:10}
-    header .top{background-image:url('assets/header-bg.jpg'); background-size:cover; background-position:center;}
+
+    /* Dekoratif görseller */
+    .decor-left, .decor-right{position:fixed; top:90px; bottom:90px; width:120px; pointer-events:none; opacity:.12; background-size:contain; background-repeat:no-repeat; background-position:center}
+    .decor-left{left:0; background-image:url('/assets/side-left.png');}
+    .decor-right{right:0; background-image:url('/assets/side-right.png');}
+
+    header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:var(--bg)}
+    header .top{background-image:url('/assets/header-bg.jpg'); background-size:cover; background-position:center;}
     .container{max-width:1100px;margin:0 auto;padding:24px}
     .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:40px;height:40px;border-radius:10px;background:#fff url('assets/logo.svg') center/70% no-repeat;box-shadow:var(--shadow)}
+    .logo{width:40px;height:40px;border-radius:10px;background:#fff url('/assets/logo.svg') center/70% no-repeat;box-shadow:var(--shadow)}
     h1{margin:0;font-size:28px;color:#0f172a;text-shadow:0 1px 0 rgba(255,255,255,.5)}
     .pill{padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--muted);background:#fff}
 
-    .decor-left, .decor-right{position:fixed; top:90px; bottom:90px; width:120px; pointer-events:none; opacity:.12; background-size:contain; background-repeat:no-repeat; background-position:center}
-    .decor-left{left:0; background-image:url('assets/side-left.png');}
-    .decor-right{right:0; background-image:url('assets/side-right.png');}
+    footer{border-top:1px solid var(--line);background:#fff url('/assets/footer-texture.png') center/cover no-repeat;}
 
     .grid{display:grid;gap:18px}
     @media(min-width:720px){.grid{grid-template-columns:repeat(3,1fr)}}
@@ -57,7 +61,6 @@
     .badge.bad{color:var(--bad);border-color:#fecaca;background:#fef2f2}
 
     .section{margin:16px 0;padding:12px;border:1px dashed var(--line);border-radius:12px;background:#fff}
-    footer{border-top:1px solid var(--line);background:#fff url('assets/footer-texture.png') center/cover no-repeat;}
   </style>
 </head>
 <body>
@@ -70,8 +73,8 @@
         <div class="brand">
           <div class="logo" aria-hidden="true"></div>
           <div>
-            <h1>Ödev Takip Sistemi (SCORM)</h1>
-            <div class="muted" style="font-size:13px">Tarayıcı verisi + SCORM suspend_data</div>
+            <h1>Ödev Takip Sistemi</h1>
+            <div class="muted" style="font-size:13px">Sunucu destekli · JSON veritabanı</div>
           </div>
         </div>
         <div id="activeUser" class="pill">Giriş yapılmadı</div>
@@ -80,8 +83,9 @@
   </header>
 
   <main class="container">
+    <!-- AUTH -->
     <section id="authView">
-      <p class="muted">SCORM 1.2 uyumlu paket. Cihazda <b>localStorage</b> kullanır; özet veriyi LMS'e kaydeder. Hızlı deneme için <b>Demo Verileri Yükle</b>.</p>
+      <p class="muted">Rolünü seç ve giriş yap. İlk kurulumda <b>“Demo Verileri Yükle”</b> ile öğretmen/öğrenci/veli/ödev eklenir.</p>
       <div class="grid">
         <div class="card">
           <h3>Öğretmen Girişi</h3>
@@ -93,14 +97,13 @@
             <button class="btn primary" onclick="loginTeacher()">Giriş Yap</button>
             <button class="btn ghost" onclick="seedDemo()">Demo Verileri Yükle</button>
           </div>
-          <p class="muted" style="font-size:12px;margin-top:8px">Demo: ad <b>ogretmen</b>, şifre <b>1234</b></p>
         </div>
         <div class="card">
           <h3>Öğrenci Girişi</h3>
           <label>Öğrenci Adı</label>
           <input id="s-name" placeholder="örn. Ayşe Y." />
           <label style="margin-top:8px">Öğrenci Kodu</label>
-          <input id="s-code" placeholder="örn. STU-1234" />
+          <input id="s-code" placeholder="örn. STU-XXXXXX" />
           <div class="toolbar" style="margin-top:12px">
             <button class="btn primary" onclick="loginStudent()">Giriş Yap</button>
           </div>
@@ -110,7 +113,7 @@
           <label>Veli Adı</label>
           <input id="p-name" placeholder="örn. Mehmet B." />
           <label style="margin-top:8px">Veli Kodu</label>
-          <input id="p-code" placeholder="örn. PAR-1234" />
+          <input id="p-code" placeholder="örn. PAR-XXXXXX" />
           <div class="toolbar" style="margin-top:12px">
             <button class="btn primary" onclick="loginParent()">Giriş Yap</button>
           </div>
@@ -122,29 +125,53 @@
           <button class="btn" onclick="exportData()">Verileri Dışa Aktar (JSON)</button>
           <label class="btn" for="importFile" style="cursor:pointer">Verileri İçe Aktar</label>
           <input id="importFile" type="file" accept="application/json" class="hidden" />
-          <button class="btn" onclick="resetAll()">Sistemi Sıfırla</button>
         </div>
       </div>
     </section>
 
+    <!-- TEACHER DASHBOARD -->
     <section id="teacherView" class="hidden">
-      <div class="tabs"><div class="tab active" data-tab="students" onclick="switchTab(this)">Öğrenciler</div><div class="tab" data-tab="parents" onclick="switchTab(this)">Veliler</div><div class="tab" data-tab="assignments" onclick="switchTab(this)">Ödevler</div></div>
+      <div class="tabs" role="tablist">
+        <div class="tab active" data-tab="students" onclick="switchTab(this)">Öğrenciler</div>
+        <div class="tab" data-tab="parents" onclick="switchTab(this)">Veliler</div>
+        <div class="tab" data-tab="assignments" onclick="switchTab(this)">Ödevler</div>
+      </div>
+
       <div class="tabpanel" id="tab-students">
         <div class="card" style="margin-bottom:12px">
           <h3>Öğrenci Ekle</h3>
           <div class="row">
-            <div><label>Ad Soyad</label><input id="st-name" /></div>
-            <div><label>Sınıf</label><input id="st-class" placeholder="örn. 7/A" /></div>
+            <div>
+              <label>Ad Soyad</label>
+              <input id="st-name" />
+            </div>
+            <div>
+              <label>Sınıf</label>
+              <input id="st-class" placeholder="örn. 7/A" />
+            </div>
           </div>
           <div class="row" style="margin-top:8px">
-            <div><label>Veli Adı (opsiyonel)</label><input id="st-parent-name" placeholder="örn. Ayşe K." /></div>
-            <div><label>Veli İletişim (opsiyonel)</label><input id="st-parent-contact" placeholder="e-posta/telefon" /></div>
+            <div>
+              <label>Veli Adı (opsiyonel)</label>
+              <input id="st-parent-name" placeholder="örn. Ayşe K." />
+            </div>
+            <div>
+              <label>Veli İletişim (opsiyonel)</label>
+              <input id="st-parent-contact" placeholder="e-posta/telefon" />
+            </div>
           </div>
-          <div class="toolbar" style="margin-top:12px"><button class="btn primary" onclick="addStudent()">Ekle</button></div>
+          <div class="toolbar" style="margin-top:12px">
+            <button class="btn primary" onclick="addStudent()">Ekle</button>
+          </div>
         </div>
         <div class="card">
           <h3>Öğrenci Listesi</h3>
-          <table id="studentsTable"><thead><tr><th>Ad Soyad</th><th>Sınıf</th><th>Öğrenci Kodu</th><th>Veli</th><th>Veli Kodu</th><th>Aksiyon</th></tr></thead><tbody></tbody></table>
+          <table id="studentsTable">
+            <thead>
+              <tr><th>Ad Soyad</th><th>Sınıf</th><th>Öğrenci Kodu</th><th>Veli</th><th>Veli Kodu</th><th>Aksiyon</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
 
@@ -152,17 +179,34 @@
         <div class="card" style="margin-bottom:12px">
           <h3>Veli Ekle</h3>
           <div class="row">
-            <div><label>Veli Adı</label><input id="pa-name" /></div>
-            <div><label>İletişim</label><input id="pa-contact" placeholder="e-posta/telefon" /></div>
+            <div>
+              <label>Veli Adı</label>
+              <input id="pa-name" />
+            </div>
+            <div>
+              <label>İletişim</label>
+              <input id="pa-contact" placeholder="e-posta/telefon" />
+            </div>
           </div>
           <div class="row" style="margin-top:8px">
-            <div><label>Öğrenci</label><select id="pa-student"></select></div>
-            <div><label>&nbsp;</label><button class="btn primary" onclick="addParent()">Ekle</button></div>
+            <div>
+              <label>Öğrenci</label>
+              <select id="pa-student"></select>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button class="btn primary" onclick="addParent()">Ekle</button>
+            </div>
           </div>
         </div>
         <div class="card">
           <h3>Veli Listesi</h3>
-          <table id="parentsTable"><thead><tr><th>Veli</th><th>Çocuk</th><th>Veli Kodu</th><th>İletişim</th><th>Aksiyon</th></tr></thead><tbody></tbody></table>
+          <table id="parentsTable">
+            <thead>
+              <tr><th>Veli</th><th>Çocuk</th><th>Veli Kodu</th><th>İletişim</th><th>Aksiyon</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
 
@@ -170,41 +214,76 @@
         <div class="card" style="margin-bottom:12px">
           <h3>Ödev Oluştur</h3>
           <div class="row">
-            <div><label>Başlık</label><input id="as-title" placeholder="örn. Kesirler Çalışma Kağıdı" /></div>
-            <div><label>Teslim Tarihi</label><input id="as-due" type="date" /></div>
+            <div>
+              <label>Başlık</label>
+              <input id="as-title" placeholder="örn. Kesirler Çalışma Kağıdı" />
+            </div>
+            <div>
+              <label>Teslim Tarihi</label>
+              <input id="as-due" type="date" />
+            </div>
           </div>
           <div class="row" style="margin-top:8px">
-            <div><label>Hedef (Sınıf veya Öğrenciler)</label><input id="as-target" placeholder="örn. 7/A veya Ayşe; Ali" /></div>
-            <div><label>Ders</label><input id="as-subject" placeholder="örn. Matematik" /></div>
+            <div>
+              <label>Hedef Öğrenciler / Sınıflar</label>
+              <select id="as-targets" multiple size="6" style="width:100%"></select>
+              <small class="muted">Ctrl/Shift ile çoklu seçim. İlk grupta sınıflar, altında öğrenciler listelenir.</small>
+            </div>
+            <div>
+              <label>Ders</label>
+              <input id="as-subject" placeholder="örn. Matematik" />
+            </div>
           </div>
           <label style="margin-top:8px">Açıklama / Bağlantı</label>
           <textarea id="as-desc" placeholder="Detaylar, link, yönergeler..."></textarea>
-          <div class="toolbar" style="margin-top:12px"><button class="btn primary" onclick="addAssignment()">Kaydet</button></div>
+          <div class="toolbar" style="margin-top:12px">
+            <button class="btn primary" onclick="addAssignment()">Kaydet</button>
+          </div>
         </div>
         <div class="card">
           <div class="row" style="justify-content:space-between;align-items:center">
             <h3>Ödevler</h3>
             <div class="row" style="max-width:420px">
               <input id="as-filter" placeholder="Başlık/öğrenci/sınıf ara" oninput="renderAssignments()" />
-              <select id="as-status" onchange="renderAssignments()"><option value="all">Tümü</option><option value="open">Açık</option><option value="past">Süresi Geçen</option><option value="archived">Arşiv</option></select>
+              <select id="as-status" onchange="renderAssignments()">
+                <option value="all">Tümü</option>
+                <option value="open">Açık</option>
+                <option value="past">Süresi Geçen</option>
+                <option value="archived">Arşiv</option>
+              </select>
             </div>
           </div>
-          <table id="assignmentsTable"><thead><tr><th>Başlık</th><th>Ders</th><th>Hedef</th><th>Teslim</th><th>Durum</th><th>Aksiyon</th></tr></thead><tbody></tbody></table>
+          <table id="assignmentsTable">
+            <thead>
+              <tr><th>Başlık</th><th>Ders</th><th>Hedef</th><th>Teslim</th><th>Durum</th><th>Aksiyon</th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
     </section>
 
+    <!-- STUDENT DASHBOARD -->
     <section id="studentView" class="hidden">
       <div class="card">
         <h3>Ödevlerim</h3>
         <div class="row" style="margin-bottom:10px">
           <input id="st-search" placeholder="başlık/ders ara" oninput="renderStudentAssignments()" />
-          <select id="st-sort" onchange="renderStudentAssignments()"><option value="due">Tarihe göre</option><option value="title">Başlığa göre</option></select>
+          <select id="st-sort" onchange="renderStudentAssignments()">
+            <option value="due">Tarihe göre</option>
+            <option value="title">Başlığa göre</option>
+          </select>
         </div>
-        <table id="studentAsTable"><thead><tr><th>Başlık</th><th>Ders</th><th>Teslim</th><th>Durum</th><th>Aksiyon</th></tr></thead><tbody></tbody></table>
+        <table id="studentAsTable">
+          <thead>
+            <tr><th>Başlık</th><th>Açıklama</th><th>Ders</th><th>Teslim</th><th>Durum</th><th>Aksiyon</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </section>
 
+    <!-- PARENT DASHBOARD -->
     <section id="parentView" class="hidden">
       <div class="card">
         <h3>Çocuğumun Ödevleri</h3>
@@ -212,69 +291,167 @@
           <select id="pa-child" onchange="renderParentAssignments()"></select>
           <input id="pa-search" placeholder="başlık/ders ara" oninput="renderParentAssignments()" />
         </div>
-        <table id="parentAsTable"><thead><tr><th>Başlık</th><th>Ders</th><th>Teslim</th><th>Durum</th></tr></thead><tbody></tbody></table>
+        <table id="parentAsTable">
+          <thead>
+            <tr><th>Başlık</th><th>Ders</th><th>Teslim</th><th>Durum</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </section>
   </main>
 
   <footer>
     <div class="container" style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;gap:12px;flex-wrap:wrap">
-      <div class="muted" style="font-size:13px">SCORM paket — yerel veri: <span id="stats"></span></div>
-      <div class="toolbar"><button class="btn" onclick="logout()">Çıkış</button></div>
+      <div class="muted" style="font-size:13px">Sunucu: <span id="stats">Hazır mı kontrol ediliyor…</span></div>
+      <div class="toolbar">
+        <button class="btn" onclick="logout()">Çıkış</button>
+      </div>
     </div>
   </footer>
 
   <script>
-    const DB_KEY = 'odevTakipDB_v1';
-    function loadDB(){ const raw=localStorage.getItem(DB_KEY); if(!raw){ const e={teachers:[],students:[],parents:[],assignments:[],done:[]}; localStorage.setItem(DB_KEY, JSON.stringify(e)); return e;} try{return JSON.parse(raw);}catch(e){return {teachers:[],students:[],parents:[],assignments:[],done:[]};}}
-    function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); refreshStats(); }
-    function refreshStats(){ const db=loadDB(); document.getElementById('stats').textContent = `Öğrt:${db.teachers.length} • Öğr:${db.students.length} • Veli:${db.parents.length} • Ödev:${db.assignments.length}`; }
-    const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
-    const uid=(p)=>`${p}-${Math.random().toString(36).slice(2,8).toUpperCase()}`; const todayStr=()=>new Date().toISOString().slice(0,10); const fmtDate=d=>new Date(d+'T00:00:00').toLocaleDateString('tr-TR',{weekday:'short',day:'2-digit',month:'2-digit'});
-    function toast(m){ alert(m); }
-    let session={role:null,user:null};
-    function setActiveUser(){ const el=$('#activeUser'); if(!session.role){el.textContent='Giriş yapılmadı';return;} el.textContent=`${session.role.toUpperCase()} · ${session.user?.name||''}`; }
-    function hideAll(){ ['authView','teacherView','studentView','parentView'].forEach(id=>$('#'+id).classList.add('hidden')); } function show(id){ $('#'+id).classList.remove('hidden'); }
-    function logout(){ session={role:null,user:null}; setActiveUser(); hideAll(); show('authView'); }
-    function loginTeacher(){ const name=$('#t-name').value.trim(); const pass=$('#t-pass').value.trim(); const db=loadDB(); const t=db.teachers.find(x=>x.name.toLowerCase()===name.toLowerCase()&&x.password===pass); if(!t){toast('Öğretmen bulunamadı. Demo: ogretmen / 1234');return;} session={role:'öğretmen',user:t}; setActiveUser(); hideAll(); show('teacherView'); renderStudents(); renderParents(); renderAssignments(); fillParentStudentSelect();}
-    function loginStudent(){ const name=$('#s-name').value.trim(); const code=$('#s-code').value.trim(); const db=loadDB(); const s=db.students.find(x=>x.name.toLowerCase()===name.toLowerCase()&&x.code===code); if(!s){toast('Öğrenci bulunamadı.');return;} session={role:'öğrenci',user:s}; setActiveUser(); hideAll(); show('studentView'); renderStudentAssignments();}
-    function loginParent(){ const name=$('#p-name').value.trim(); const code=$('#p-code').value.trim(); const db=loadDB(); const p=db.parents.find(x=>x.name.toLowerCase()===name.toLowerCase()&&x.code===code); if(!p){toast('Veli bulunamadı.');return;} session={role:'veli',user:p}; setActiveUser(); hideAll(); show('parentView'); fillParentChildren(); renderParentAssignments();}
-    function seedDemo(){ const db=loadDB(); if(db.students.length||db.teachers.length||db.parents.length||db.assignments.length){ if(!confirm('Mevcut veriler üzerine demo eklenecek. Devam?')) return; } const t={id:uid('TCH'),name:'ogretmen',password:'1234'}; const s1={id:uid('STU'),name:'Ayşe Yılmaz',class:'7/A',code:uid('STU')}; const s2={id:uid('STU'),name:'Ali Demir',class:'7/A',code:uid('STU')}; const p1={id:uid('PAR'),name:'Mehmet Yılmaz',contact:'mehmet@example.com',code:uid('PAR'),students:[s1.id]}; const p2={id:uid('PAR'),name:'Elif Demir',contact:'0532 000 00 00',code:uid('PAR'),students:[s2.id]}; const as1={id:uid('ASG'),title:'Kesirler Alıştırma',subject:'Matematik',desc:'Kitap s.34-36, 1-8 arası sorular',due:todayStr(),targets:['7/A'],archived:false}; const as2={id:uid('ASG'),title:'Okuma Ödevi',subject:'Türkçe',desc:'“Mavi Yolculuk” metni',due:todayStr(),targets:[s1.id],archived:false}; db.teachers.push(t); db.students.push(s1,s2); db.parents.push(p1,p2); db.assignments.push(as1,as2); saveDB(db); refreshStats(); toast('Demo eklendi. Öğretmen: ogretmen / 1234'); }
-    function addStudent(){ const name=$('#st-name').value.trim(); const clazz=$('#st-class').value.trim(); const pName=$('#st-parent-name').value.trim(); const pContact=$('#st-parent-contact').value.trim(); if(!name||!clazz){toast('Ad ve sınıf zorunlu.');return;} const db=loadDB(); const s={id:uid('STU'),name,class:clazz,code:uid('STU')}; db.students.push(s); if(pName){ const parent={id:uid('PAR'),name:pName,contact:pContact||'',code:uid('PAR'),students:[s.id]}; db.parents.push(parent);} saveDB(db); $('#st-name').value=''; $('#st-class').value=''; $('#st-parent-name').value=''; $('#st-parent-contact').value=''; renderStudents(); renderParents(); fillParentStudentSelect(); }
-    function deleteStudent(id){ const db=loadDB(); db.students=db.students.filter(x=>x.id!==id); db.parents.forEach(p=>p.students=p.students.filter(sid=>sid!==id)); saveDB(db); renderStudents(); renderParents(); fillParentStudentSelect(); }
-    function renderStudents(){ const db=loadDB(); const tbody=$('#studentsTable tbody'); tbody.innerHTML=db.students.map(s=>{ const parent=db.parents.find(p=>p.students.includes(s.id)); return `<tr><td>${s.name}</td><td>${s.class}</td><td><span class="badge">${s.code}</span></td><td>${parent?parent.name:'—'}</td><td>${parent?'<span class="badge">'+parent.code+'</span>':'—'}</td><td><button class="btn" onclick="copyText('${s.code}')">Kodu Kopyala</button> <button class="btn" onclick="deleteStudent('${s.id}')">Sil</button></td></tr>`; }).join(''); }
-    function fillParentStudentSelect(){ const db=loadDB(); const sel=$('#pa-student'); sel.innerHTML=db.students.map(s=>`<option value="${s.id}">${s.name} · ${s.class}</option>`).join(''); }
-    function addParent(){ const name=$('#pa-name').value.trim(); const contact=$('#pa-contact').value.trim(); const studentId=$('#pa-student').value; if(!name||!studentId){toast('Veli adı ve öğrenci gerekli.');return;} const db=loadDB(); const p={id:uid('PAR'),name,contact,code:uid('PAR'),students:[studentId]}; db.parents.push(p); saveDB(db); $('#pa-name').value=''; $('#pa-contact').value=''; renderParents(); }
-    function deleteParent(id){ const db=loadDB(); db.parents=db.parents.filter(x=>x.id!==id); saveDB(db); renderParents(); }
-    function renderParents(){ const db=loadDB(); const tbody=$('#parentsTable tbody'); tbody.innerHTML=db.parents.map(p=>{ const kids=p.students.map(id=>db.students.find(s=>s.id===id)?.name||'—').join(', '); return `<tr><td>${p.name}</td><td>${kids||'—'}</td><td><span class="badge">${p.code}</span></td><td>${p.contact||'—'}</td><td><button class="btn" onclick="copyText('${p.code}')">Kodu Kopyala</button> <button class="btn" onclick="deleteParent('${p.id}')">Sil</button></td></tr>`; }).join(''); }
-    function fillParentChildren(){ const db=loadDB(); const sel=$('#pa-child'); const p=session.user; sel.innerHTML=(p.students||[]).map(id=>{ const s=db.students.find(x=>x.id===id); return `<option value="${id}">${s?.name||'—'} · ${s?.class||''}</option>`; }).join(''); }
-    function addAssignment(){ const title=$('#as-title').value.trim(); const due=$('#as-due').value||todayStr(); const target=$('#as-target').value.trim(); const subject=$('#as-subject').value.trim(); const desc=$('#as-desc').value.trim(); if(!title||!target){toast('Başlık ve hedef gerekli.');return;} const targets=target.split(';').map(s=>s.trim()).filter(Boolean); const db=loadDB(); db.assignments.push({id:uid('ASG'),title,due,subject,desc,targets,archived:false}); saveDB(db); $('#as-title').value=''; $('#as-due').value=''; $('#as-target').value=''; $('#as-subject').value=''; $('#as-desc').value=''; renderAssignments(); toast('Ödev eklendi.'); }
-    function archiveAssignment(id,val=true){ const db=loadDB(); const a=db.assignments.find(x=>x.id===id); if(a){ a.archived=val; saveDB(db); renderAssignments(); } }
-    function deleteAssignment(id){ const db=loadDB(); db.assignments=db.assignments.filter(x=>x.id!==id); db.done=db.done.filter(d=>d.asg!==id); saveDB(db); renderAssignments(); renderStudentAssignments(); renderParentAssignments(); }
-    function matchesFilter(a,db){ const q=($('#as-filter').value||'').toLowerCase(); if(!q) return true; const inTargets=a.targets.join(' ').toLowerCase(); const inNames=db.students.filter(s=>a.targets.includes(s.id)).map(s=>s.name.toLowerCase()).join(' '); return a.title.toLowerCase().includes(q) || (a.subject||'').toLowerCase().includes(q) || inTargets.includes(q) || inNames.includes(q); }
-    function statusOf(a){ const d=new Date(a.due+'T00:00:00'); const t=new Date(todayStr()+'T00:00:00'); if(a.archived) return {cls:'badge',text:'Arşiv'}; if(d<t) return {cls:'badge bad',text:'Süresi geçti'}; if(+d===+t) return {cls:'badge warn',text:'Bugün'}; return {cls:'badge good',text:'Açık'}; }
-    function renderAssignments(){ const db=loadDB(); const tbody=$('#assignmentsTable tbody'); const view=($('#as-status').value||'all'); tbody.innerHTML=db.assignments.filter(a=>matchesFilter(a,db)).filter(a=>{ if(view==='all') return true; if(view==='archived') return a.archived; const s=statusOf(a).text; if(view==='open') return s==='Açık'||s==='Bugün'; if(view==='past') return s==='Süresi geçti'; return true; }).sort((a,b)=>a.due.localeCompare(b.due)).map(a=>{ const s=statusOf(a); const targetLabel=a.targets.map(t=>/^STU-/.test(t)?(db.students.find(x=>x.id===t)?.name||'—'):t).join(', '); return `<tr><td>${a.title}</td><td>${a.subject||'—'}</td><td>${targetLabel}</td><td>${fmtDate(a.due)}</td><td><span class="${s.cls}">${s.text}</span></td><td>${a.archived?`<button class='btn' onclick="archiveAssignment('${a.id}',false)">Geri Al</button>`:`<button class='btn' onclick="archiveAssignment('${a.id}',true)">Arşivle</button>`} <button class='btn' onclick="deleteAssignment('${a.id}')">Sil</button></td></tr>`; }).join(''); }
-    function studentRelevant(a,stu){ return a.targets.includes(stu.id)||a.targets.includes(stu.class); }
-    function isDone(aid,sid){ const db=loadDB(); return db.done.some(d=>d.asg===aid&&d.student===sid); }
-    function toggleDone(aid,sid){ const db=loadDB(); const i=db.done.findIndex(d=>d.asg===aid&&d.student===sid); if(i>-1) db.done.splice(i,1); else db.done.push({asg:aid,student:sid,at:new Date().toISOString()}); saveDB(db); renderStudentAssignments(); renderParentAssignments(); }
-    function renderStudentAssignments(){ if(session.role!=='öğrenci') return; const db=loadDB(); const stu=session.user; const q=($('#st-search').value||'').toLowerCase(); const sorter=$('#st-sort').value||'due'; const items=db.assignments.filter(a=>!a.archived && studentRelevant(a,stu) && (a.title.toLowerCase().includes(q) || (a.subject||'').toLowerCase().includes(q))); items.sort((a,b)=> sorter==='title'? a.title.localeCompare(b.title) : a.due.localeCompare(b.due)); $('#studentAsTable tbody').innerHTML=items.map(a=>{ const done=isDone(a.id,stu.id); const s=statusOf(a); return `<tr><td>${a.title}</td><td>${a.subject||'—'}</td><td>${fmtDate(a.due)}</td><td>${done?'<span class="badge good">Tamamlandı</span>':`<span class="${s.cls}">${s.text}</span>`}</td><td><button class="btn" onclick="toggleDone('${a.id}','${stu.id}')">${done?'Geri Al':'Tamamla'}</button></td></tr>`; }).join(''); }
-    function renderParentAssignments(){ if(session.role!=='veli') return; const db=loadDB(); const childId=$('#pa-child').value||session.user.students?.[0]; const stu=db.students.find(s=>s.id===childId); const q=($('#pa-search').value||'').toLowerCase(); const items=db.assignments.filter(a=>!a.archived && stu && studentRelevant(a,stu) && (a.title.toLowerCase().includes(q) || (a.subject||'').toLowerCase().includes(q))).sort((a,b)=>a.due.localeCompare(b.due)); $('#parentAsTable tbody').innerHTML=items.map(a=>{ const done=isDone(a.id,stu.id); return `<tr><td>${a.title}</td><td>${a.subject||'—'}</td><td>${fmtDate(a.due)}</td><td>${done?'<span class="badge good">Tamamlandı</span>':'<span class="badge warn">Bekliyor</span>'}</td></tr>`; }).join(''); }
-    function switchTab(el){ $$('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); const k=el.dataset.tab; $$('.tabpanel').forEach(p=>p.classList.add('hidden')); document.getElementById('tab-'+k).classList.remove('hidden'); if(k==='parents') fillParentStudentSelect(); if(k==='assignments') renderAssignments(); }
-    function exportData(){ const data=JSON.stringify(loadDB(),null,2); const blob=new Blob([data],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='odev-takip-veri.json'; a.click(); URL.revokeObjectURL(url); }
-    document.getElementById('importFile').addEventListener('change',(e)=>{ const file=e.target.files?.[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{ try{ const json=JSON.parse(reader.result); localStorage.setItem(DB_KEY, JSON.stringify(json)); toast('Veriler içe aktarıldı.'); refreshStats(); }catch(err){ toast('Hatalı JSON.'); } }; reader.readAsText(file); });
-    refreshStats();
-  </script>
+    const api = {
+      token:null, teacher:null, student:null, parent:null,
+      headers(){ return this.token && this.teacher ? { 'x-auth-token': this.token, 'x-teacher-id': this.teacher.id, 'Content-Type':'application/json' } : { 'Content-Type':'application/json' }; },
+      async get(url){ const r = await fetch(url, { headers: this.headers() }); if(!r.ok) throw new Error(await r.text()); return r.json(); },
+      async post(url, body){ const r = await fetch(url, { method:'POST', headers: this.headers(), body: JSON.stringify(body||{}) }); if(!r.ok) throw new Error(await r.text()); return r.json(); },
+      async del(url){ const r = await fetch(url, { method:'DELETE', headers: this.headers() }); if(!r.ok) throw new Error(await r.text()); return r.json(); },
+      async patch(url, body){ const r = await fetch(url, { method:'PATCH', headers: this.headers(), body: JSON.stringify(body||{}) }); if(!r.ok) throw new Error(await r.text()); return r.json(); }
+    };
 
-  <!-- Minimal SCORM 1.2 integration -->
-  <script>
-  (function(){
-    var api=null, initialized=false;
-    function findAPI(win){ var limit=0; while(win && !win.API && limit<500){ limit++; if(win.parent && win.parent!=win){ win = win.parent; } else { break; } } return win ? win.API : null; }
-    function init(){ try{ api=findAPI(window); if(!api) return; var r=api.LMSInitialize(""); initialized=(r+""==="true"); if(initialized){ var susp=api.LMSGetValue("cmi.suspend_data")||""; if(susp){ try{ var db=JSON.parse(susp); var full=JSON.parse(localStorage.getItem('odevTakipDB_v1')||'{}'); full=full&&typeof full==='object'?full:{}; full.assignments=full.assignments&&Array.isArray(full.assignments)&&full.assignments.length?full.assignments:(db.assignments||[]); full.done=db.done||full.done||[]; localStorage.setItem('odevTakipDB_v1', JSON.stringify(full)); }catch(e){} } } }catch(e){} }
-    function commit(){ try{ if(!api||!initialized) return; var raw=localStorage.getItem('odevTakipDB_v1')||''; var db={}; try{ var full=JSON.parse(raw)||{}; db={assignments:full.assignments||[], done:full.done||[]}; }catch(e){} var s=JSON.stringify(db); if(s.length>3800){ db.assignments=(db.assignments||[]).map(function(a){ return {id:a.id,title:a.title,due:a.due,targets:a.targets||[],archived:!!a.archived}; }); s=JSON.stringify(db);} if(s.length>4000){ s='{"msg":"data too big"}'; } api.LMSSetValue("cmi.suspend_data", s); var doneCount=(db.done||[]).length; api.LMSSetValue("cmi.core.lesson_status", doneCount>0 ? "completed" : "incomplete"); api.LMSCommit(""); }catch(e){} }
-    function finish(){ try{ if(!api||!initialized) return; commit(); api.LMSFinish(""); }catch(e){} }
-    window.addEventListener('load', init); window.addEventListener('beforeunload', finish); window.addEventListener('unload', finish); setInterval(commit, 15000);
-  })();
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+    const fmtDate = (d) => new Date(d+'T00:00:00').toLocaleDateString('tr-TR', {weekday:'short',day:'2-digit',month:'2-digit'});
+
+    const todayStr = () => new Date().toISOString().slice(0,10);
+    function toast(msg){ alert(msg); }
+    function setActiveUser(){
+      const el = $('#activeUser');
+      if(api.teacher) el.textContent = `ÖĞRETMEN · ${api.teacher.name}`;
+      else if(api.student) el.textContent = `ÖĞRENCİ · ${api.student.name}`;
+      else if(api.parent) el.textContent = `VELİ · ${api.parent.name}`;
+      else el.textContent = 'Giriş yapılmadı';
+    }
+    function hideAll(){ ['authView','teacherView','studentView','parentView'].forEach(id=>$('#'+id).classList.add('hidden')); }
+    function show(id){ $('#'+id).classList.remove('hidden'); }
+
+    async function checkServer(){
+      try{ const r = await api.get('/api/health'); $('#stats').textContent = r.ok ? 'Çalışıyor' : 'Hata'; }catch{ $('#stats').textContent = 'Erişim yok'; }
+    }
+
+    // AUTH
+    async function seedDemo(){
+      try{ const r = await api.post('/api/setup/seed-demo'); toast('Demo yüklendi. Öğretmen: ogretmen / 1234'); }
+      catch(e){ toast('Demo yüklenemedi (muhtemelen daha önce kuruldu). İlk öğretmeni elle ekleyin: /api/setup/first-teacher'); }
+    }
+    async function loginTeacher(){
+      const name = $('#t-name').value.trim(); const password = $('#t-pass').value.trim();
+      try{ const r = await api.post('/api/login/teacher',{name,password}); api.teacher = r.teacher; api.token = r.token; setActiveUser(); hideAll(); show('teacherView'); renderStudents(); renderParents(); renderAssignments(); fillParentStudentSelect(); fillAssignmentTargetsSelect(); document.querySelector('#as-due').value = todayStr(); }
+      catch(e){ toast('Giriş başarısız: ' + (e.message||'')); }
+    }
+    async function loginStudent(){
+      const name = $('#s-name').value.trim(); const code = $('#s-code').value.trim();
+      try{ const r = await api.post('/api/login/student',{name,code}); api.student = r.student; setActiveUser(); hideAll(); show('studentView'); renderStudentAssignments(); }
+      catch(e){ toast('Giriş başarısız'); }
+    }
+    async function loginParent(){
+      const name = $('#p-name').value.trim(); const code = $('#p-code').value.trim();
+      try{ const r = await api.post('/api/login/parent',{name,code}); api.parent = r.parent; setActiveUser(); hideAll(); show('parentView'); fillParentChildren(); renderParentAssignments(); }
+      catch(e){ toast('Giriş başarısız'); }
+    }
+    function logout(){ api.token=null; api.teacher=null; api.student=null; api.parent=null; setActiveUser(); hideAll(); show('authView'); }
+
+    // TEACHER — Students
+    async function renderStudents(){
+      if(!api.teacher) return; const tbody = $('#studentsTable tbody');
+      try{ const list = await api.get('/api/students'); const parents = await api.get('/api/parents');
+        tbody.innerHTML = list.map(s=>{
+          const par = parents.find(p => (p.students||[]).includes(s.id));
+          return `<tr>
+            <td>${a.title}</td>
+            <td class="muted">${a.desc||'—'}</td>
+            <td>${a.subject||'—'}</td>
+            <td>${fmtDate(a.due)}</td>
+            <td>${s}</td>
+            <td><button class="btn" onclick="toggleDone('${a.id}')">${a.done?'Geri Al':'Tamamla'}</button></td>
+          </tr>`;
+      }).join('');
+    }
+    async function addAssignment(){
+      const title=$('#as-title').value.trim();
+      const due=($('#as-due').value||'').trim();
+      const subject=$('#as-subject').value.trim();
+      const desc=$('#as-desc').value.trim();
+      const sel = document.querySelector('#as-targets');
+      const targets = Array.from(sel?.selectedOptions||[]).map(o=>o.value);
+      if(!title||targets.length===0){ toast('Başlık ve en az bir hedef gerekli'); return; }
+      try{
+        await api.post('/api/assignments',{ title, due: due||todayStr(), subject, desc, targets });
+        $('#as-title').value=''; $('#as-due').value=todayStr(); $('#as-subject').value=''; $('#as-desc').value=''; if(sel) sel.selectedIndex=-1; renderAssignments(); toast('Ödev eklendi.');
+      }catch(e){ toast('Kayıt başarısız'); }
+    }); $('#as-title').value=''; $('#as-due').value=''; $('#as-target').value=''; $('#as-subject').value=''; $('#as-desc').value=''; renderAssignments(); toast('Ödev eklendi.'); }
+      catch(e){ toast('Kayıt başarısız'); }
+    }
+    async function archiveAssignment(id, val){ try{ await api.patch('/api/assignments/'+id+'/archive',{ archived: !!val }); renderAssignments(); }catch(e){ toast('Arşivleme başarısız'); } }
+    async function deleteAssignment(id){ if(!confirm('Silinsin mi?')) return; try{ await api.del('/api/assignments/'+id); renderAssignments(); }catch(e){ toast('Silme başarısız'); } }
+
+    // STUDENT
+    async function renderStudentAssignments(){
+      if(!api.student) return; const tbody = $('#studentAsTable tbody');
+      try{
+        const list = await api.get('/api/assignments/for-student/'+api.student.id);
+        const q = ($('#st-search').value||'').toLowerCase(); const sorter = ($('#st-sort').value||'due');
+        const items = list.filter(a => a.title.toLowerCase().includes(q) || (a.subject||'').toLowerCase().includes(q));
+        items.sort((a,b)=> sorter==='title'? a.title.localeCompare(b.title) : a.due.localeCompare(b.due));
+        tbody.innerHTML = items.map(a=>{
+          const s = a.done ? '<span class="badge good">Tamamlandı</span>' : (function(){
+            const d = new Date(a.due+'T00:00:00'); const t = new Date(new Date().toISOString().slice(0,10)+'T00:00:00');
+            if(d < t) return '<span class="badge bad">Süresi geçti</span>';
+            if(+d===+t) return '<span class="badge warn">Bugün</span>';
+            return '<span class="badge good">Açık</span>';
+          })();
+          return `<tr>
+            <td title="${a.desc||''}">${a.title}</td>
+            <td>${a.subject||'—'}</td>
+            <td>${fmtDate(a.due)}</td>
+            <td>${s}</td>
+            <td><button class="btn" onclick="toggleDone('${a.id}')">${a.done?'Geri Al':'Tamamla'}</button></td>
+          </tr>`;
+        }).join('');
+      }catch(e){ tbody.innerHTML = '<tr><td colspan="5">Veri alınamadı</td></tr>'; }
+    }
+    async function toggleDone(asgId){ try{ await api.post('/api/assignments/'+asgId+'/toggle-done', { studentId: api.student.id }); renderStudentAssignments(); }catch(e){ toast('İşaretleme başarısız'); } }
+
+    // PARENT
+    function fillParentChildren(){ if(!api.parent) return; api.get('/api/parents').then(()=>{}); /* öğretmen yetkisi gerektirmiyor, doğrudan parent verisini kullanıyoruz */
+      // Parent login cevabında sadece ids var; isim için ayrı uç yok. Basitleştirme: çocukları öğrenciler tablosundan çekmeyeceğiz.
+      // Bu yüzden parent ekranında çocuk seçimi olmadan, sunucu listelerken zaten öğrenci bilgisini döndürüyor.
+    }
+    async function renderParentAssignments(){
+      if(!api.parent) return; const tbody = $('#parentAsTable tbody');
+      try{ const list = await api.get('/api/assignments/for-parent/'+api.parent.id);
+        const q = ($('#pa-search').value||'').toLowerCase();
+        const items = list.filter(a => a.title.toLowerCase().includes(q) || (a.subject||'').toLowerCase().includes(q));
+        tbody.innerHTML = items.map(a=> `<tr>
+          <td>${a.title} <span class="muted">— ${a.student.name}</span></td>
+          <td>${a.subject||'—'}</td>
+          <td>${fmtDate(a.due)}</td>
+          <td>${a.done?'<span class="badge good">Tamamlandı</span>':'<span class="badge warn">Bekliyor</span>'}</td>
+        </tr>`).join('');
+      }catch(e){ tbody.innerHTML = '<tr><td colspan="4">Veri alınamadı</td></tr>'; }
+    }
+
+    // Tabs + Tools
+    function switchTab(el){ $$('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); const k = el.dataset.tab; $$('.tabpanel').forEach(p=>p.classList.add('hidden')); document.getElementById('tab-'+k).classList.remove('hidden'); if(k==='parents') fillParentStudentSelect(); if(k==='assignments'){ fillAssignmentTargetsSelect(); if(!document.querySelector('#as-due').value){ document.querySelector('#as-due').value = todayStr(); } renderAssignments(); } }
+    function copyText(text){ navigator.clipboard?.writeText(text); toast('Kopyalandı'); }
+
+    // Export/Import
+    async function exportData(){ try{ const r = await fetch('/api/export', { headers: api.headers() }); if(!r.ok) throw 0; const blob = await r.blob(); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='odev-takip-veri.json'; a.click(); URL.revokeObjectURL(url);} catch(e){ toast('Dışa aktarma başarısız. (Öğretmen girişi yapın)'); } }
+    document.getElementById('importFile').addEventListener('change', async (e)=>{ const file = e.target.files?.[0]; if(!file) return; const text = await file.text(); try{ const json = JSON.parse(text); await api.post('/api/import', json); toast('İçe aktarıldı.'); }catch(err){ toast('Hatalı JSON veya yetki yok.'); } });
+
+    // Init
+    setActiveUser(); checkServer();
   </script>
 </body>
 </html>
